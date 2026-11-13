@@ -22,7 +22,7 @@ IGs created from [IneraFHIRTemplate](https://github.com/Inera-AB/IneraFHIRTempla
 | `includes/fragment-css.html` | Loads `inera.css` and the favicon. Fills the base template's placeholder for child template CSS |
 | `includes/fragment-header.html` | The Inera logo above the IG's menu. Fills the base template's header placeholder |
 | `content/assets/css/inera.css` | Colours, fonts and layout |
-| `content/assets/images/` | Logo and favicon |
+| `content/assets/images/` | Inera's logos and favicon. The header uses `inera-logo-header.svg`; the others (`inera-logo.svg`, `inera-logo-official.svg`, `inera-logo-negative.svg`, `inera-logo.png`) are there for IG pages that need a logo, as `assets/images/<file>` |
 
 An IG should not have its own `input/includes/fragment-css.html` or `fragment-header.html`: they replace the template's files, and the IG loses the Inera styling. The IG's own `input/includes/menu.xml` is unaffected.
 
