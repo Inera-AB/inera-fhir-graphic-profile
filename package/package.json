@@ -1,0 +1,13 @@
+{
+  "name" : "inera.fhir.template",
+  "type" : "fhir.template",
+  "license" : "CC0-1.0",
+  "description" : "Inera FHIR IG template: Inera's graphic profile on top of fhir2.base.template",
+  "author" : "Inera AB",
+  "canonical" : "http://fhir.org/templates/inera.fhir.template",
+  "base" : "fhir2.base.template",
+  "dependencies" : {
+    "fhir2.base.template" : "current"
+  },
+  "version" : "1.0.0"
+}
