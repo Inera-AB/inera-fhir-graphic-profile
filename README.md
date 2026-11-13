@@ -1,8 +1,16 @@
 # inera-fhir-graphic-profile
 
-IG Publisher template with Inera's graphic profile for Inera FHIR Implementation Guides. It builds on HL7's `fhir2.base.template` and adds only styling: no scripts.
+Inera's graphic profile for FHIR Implementation Guides: an IG Publisher template that adds Inera's colours, fonts and logo on top of HL7's `fhir2.base.template`. It holds styling only, no scripts.
 
-An IG uses it in `ig.ini`:
+## How it works
+
+- New IGs created from [IneraFHIRTemplate](https://github.com/Inera-AB/IneraFHIRTemplate) get the Inera styling from this repo automatically.
+- To change the styling for all IGs: change this repo, tag `v1.x.y` and move `v1`. Every IG picks it up on its next build, locally and in CI.
+- Versions already published keep their look. They are never rebuilt.
+
+## Use it in an IG
+
+An IG points to this repo in `ig.ini`:
 
 ```ini
 [IG]
@@ -10,31 +18,46 @@ ig = fsh-generated/resources/ImplementationGuide-<id>.json
 template = https://github.com/Inera-AB/inera-fhir-graphic-profile/tree/v1
 ```
 
-IG Publisher downloads the template from GitHub on every build, locally and in CI. A change released here reaches every IG on `v1` at its next build. Published versions of an IG are never rebuilt, so they keep the look they were published with.
+IG Publisher downloads the template from GitHub on every build. IGs created from IneraFHIRTemplate already have this line.
 
-IGs created from [IneraFHIRTemplate](https://github.com/Inera-AB/IneraFHIRTemplate) use it from the start.
+An IG created before this repo existed has its own copies of the Inera files. To switch it over:
+
+1. In `ig.ini`, set `template = https://github.com/Inera-AB/inera-fhir-graphic-profile/tree/v1`.
+2. Delete `input/includes/fragment-css.html`, `input/includes/fragment-header.html` and `input/images/inera*`.
+3. If a page links to a logo, change the link to `assets/images/<file>`, for example `assets/images/inera-logo.svg`.
+4. Build and check that the header logo and colours are there.
+
+An IG must not have its own `input/includes/fragment-css.html` or `fragment-header.html`. They replace this template's files, and the Inera styling disappears. The IG's `input/includes/menu.xml` is its own and is unaffected.
+
+## Change the styling
+
+1. Make the change on a branch here, in `content/assets/css/inera.css` or another file under [Contents](#contents). The branch name must not contain `/`, because IG Publisher splits the URL on slashes.
+2. Test it from an IG: on a branch of the IG, set `template = https://github.com/Inera-AB/inera-fhir-graphic-profile/tree/<your-branch>` in `ig.ini` and build. For a local build you can also use a clone: `template = ../inera-fhir-graphic-profile`. Don't merge that `ig.ini` change in the IG.
+3. Raise `version` in `package/package.json`, for example from `1.0.0` to `1.0.1`, and merge the branch to `main`.
+4. Tag the release and move `v1` to it:
+
+   ```
+   git fetch origin
+   git tag -a v1.0.1 -m "v1.0.1" origin/main
+   git tag -f v1 origin/main
+   git push origin v1.0.1
+   git push -f origin v1
+   ```
+
+Every IG on `tree/v1` uses the change from its next build.
+
+A change that needs the IGs to change too, such as renamed or moved files or a different base template, is released as `v2` instead: tag `v2.0.0` and `v2`, and move each IG to `tree/v2` when it is ready.
 
 ## Contents
 
 | Path | What it is |
 |---|---|
-| `package/package.json` | Template id `inera.fhir.template`, type `fhir.template`, base `fhir2.base.template#current` |
-| `includes/fragment-css.html` | Loads `inera.css` and the favicon. Fills the base template's placeholder for child template CSS |
-| `includes/fragment-header.html` | The Inera logo above the IG's menu. Fills the base template's header placeholder |
+| `package/package.json` | Template id `inera.fhir.template`, its version, and the base template `fhir2.base.template#current` |
+| `includes/fragment-css.html` | Loads `inera.css` and the favicon |
+| `includes/fragment-header.html` | The Inera logo above the IG's menu |
 | `content/assets/css/inera.css` | Colours, fonts and layout |
-| `content/assets/images/` | Inera's logos and favicon. The header uses `inera-logo-header.svg`; the others (`inera-logo.svg`, `inera-logo-official.svg`, `inera-logo-negative.svg`, `inera-logo.png`) are there for IG pages that need a logo, as `assets/images/<file>` |
+| `content/assets/images/` | Logos and favicon. The header uses `inera-logo-header.svg`. IG pages can use the others as `assets/images/<file>`: `inera-logo.svg`, `inera-logo-official.svg`, `inera-logo-negative.svg` and `inera-logo.png` |
 
-An IG should not have its own `input/includes/fragment-css.html` or `fragment-header.html`: they replace the template's files, and the IG loses the Inera styling. The IG's own `input/includes/menu.xml` is unaffected.
+## Keep it to styling
 
-## Versions
-
-IGs refer to a major version: `tree/v1`. `v1` is a moving tag that points to the latest `v1.x.y` release, as in [fhir-ig-workflows](https://github.com/Inera-AB/fhir-ig-workflows).
-
-- A fix or a backwards-compatible change: set `version` in `package/package.json`, tag `v1.x.y` and move `v1` to it.
-- A change that needs IGs to change (renamed files, a different base template): release as `v2`. IGs move to `tree/v2` when they are ready.
-
-Before moving `v1`, test the change on an IG branch with `template = https://github.com/Inera-AB/inera-fhir-graphic-profile/tree/<branch>`, or with a local clone: `template = ../inera-fhir-graphic-profile`. The branch name must not contain `/`: IG Publisher splits the URL on slashes.
-
-## Restrictions
-
-IG Publisher treats a template as active content if it has ant scripts or files outside a fixed list of types (for example `.js`). Active content only runs for templates on HL7's approved list when an IG is built on HL7's auto-build. This template has neither, and Inera's IGs build in GitHub Actions, so the restriction does not apply. Keep it that way: styling, HTML fragments and images only.
+IG Publisher treats a template as active content if it contains ant scripts or file types outside a fixed list, `.js` among them. On HL7's auto-build such templates only run if they are on HL7's approved list. Inera's IGs build in GitHub Actions, where the rule doesn't apply. Even so, keep this repo to CSS, HTML fragments and images.
