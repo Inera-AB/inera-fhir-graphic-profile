@@ -55,6 +55,7 @@ A change that needs the IGs to change too, such as renamed or moved files or a d
 | `package/package.json` | Template id `inera.fhir.template`, its version, and the base template `fhir2.base.template#current` |
 | `includes/fragment-css.html` | Loads `inera.css` and the favicon |
 | `includes/fragment-header.html` | The Inera logo above the IG's menu |
+| `includes/fragment-pagebegin.html` | A copy of the base template's file with one fix: h2 headings were numbered `["9"]` instead of `9`. Delete it once `fhir2.base.template` is fixed |
 | `content/assets/css/inera.css` | Colours, fonts and layout |
 | `content/assets/images/` | Logos and favicon. The header uses `inera-logo-header.svg`. IG pages can use the others as `assets/images/<file>`: `inera-logo.svg`, `inera-logo-official.svg`, `inera-logo-negative.svg` and `inera-logo.png` |
 
